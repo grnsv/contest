@@ -53,13 +53,13 @@ func Benchmark_handle(b *testing.B) {
 	input.Grow(600000)
 	input.WriteString("100000\n")
 	for range 100000 {
-		input.WriteString(strconv.Itoa(rand.IntN(99999)+1) + " ")
+		input.WriteString(strconv.Itoa(rand.IntN(100_000)+1) + " ")
 	}
 
 	w := &strings.Builder{}
-	w.Grow(400000)
 
 	for b.Loop() {
+		w.Grow(400000)
 		handle(strings.NewReader(input.String()), w)
 		w.Reset()
 	}

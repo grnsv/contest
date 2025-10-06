@@ -45,19 +45,19 @@ func Benchmark_handle(b *testing.B) {
 	input.Grow(50000)
 	input.WriteString("5000\n")
 	for i := range 2000 {
-		input.WriteString("1 " + strconv.Itoa(i) + " " + strconv.Itoa(rand.IntN(999999)+1) + "\n")
+		input.WriteString("1 " + strconv.Itoa(i) + " " + strconv.Itoa(rand.IntN(1_000_000)+1) + "\n")
 	}
 	for range 1000 {
-		input.WriteString("2 " + strconv.Itoa(rand.IntN(1999)+1) + "\n")
+		input.WriteString("2 " + strconv.Itoa(rand.IntN(2000)+1) + "\n")
 	}
 	for i := range 2000 {
 		input.WriteString("3 " + strconv.Itoa(2000-i) + "\n")
 	}
 
 	w := &strings.Builder{}
-	w.Grow(10000)
 
 	for b.Loop() {
+		w.Grow(10000)
 		handle(strings.NewReader(input.String()), w)
 		w.Reset()
 	}
