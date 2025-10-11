@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"strconv"
 )
 
 func main() {
@@ -13,35 +12,35 @@ func main() {
 }
 
 func handle(r io.Reader, w io.Writer) {
-	scanner := bufio.NewScanner(r)
-	scanner.Split(bufio.ScanWords)
+	in := bufio.NewReader(r)
+	out := bufio.NewWriter(w)
+	defer out.Flush()
 
-	next := func() int {
-		if !scanner.Scan() {
-			panic(io.EOF)
-		}
-		n, err := strconv.Atoi(scanner.Text())
-		if err != nil {
-			panic(err)
-		}
-		return n
-	}
+	var n int
+	_, _ = fmt.Fscan(in, &n)
 
-	n := next()
 	numCounts := make(map[int]int, n)
 	setSizes := make([]int, 0, n)
 
 	for i := range n {
-		k := next()
+		var k int
+		_, _ = fmt.Fscan(in, &k)
+		set := make(map[int]struct{}, k)
 		for range k {
-			x := next()
+			var x int
+			_, _ = fmt.Fscan(in, &x)
+			if _, ok := set[x]; ok {
+				continue
+			}
+			set[x] = struct{}{}
 			numCounts[x]++
 			count := numCounts[x]
 			if count != 1 && count != i+1 {
-				fail(w)
+				fail(out)
 				return
 			}
 		}
+		k = len(set)
 		setSizes = append(setSizes, k)
 	}
 
@@ -50,26 +49,22 @@ func handle(r io.Reader, w io.Writer) {
 		if count == n {
 			centerSize++
 		} else if count != 1 {
-			fail(w)
+			fail(out)
 			return
 		}
 	}
 
-	if centerSize == 0 {
-		fail(w)
-		return
-	}
-
-	fmt.Fprintf(w, "YES\n%d\n", centerSize)
+	fmt.Fprintf(out, "YES\n%d\n", centerSize)
 	for i, size := range setSizes {
 		if i == 0 {
-			fmt.Fprint(w, size-centerSize)
+			fmt.Fprint(out, size-centerSize)
 		} else {
-			fmt.Fprintf(w, " %d", size-centerSize)
+			fmt.Fprintf(out, " %d", size-centerSize)
 		}
 	}
+	fmt.Fprintln(out)
 }
 
 func fail(w io.Writer) {
-	fmt.Fprint(w, "NO")
+	fmt.Fprintln(w, "NO")
 }
