@@ -1,6 +1,7 @@
 package main
 
 import (
+	"io"
 	"math/rand/v2"
 	"strconv"
 	"strings"
@@ -143,7 +144,7 @@ func Test_handle(t *testing.T) {
 
 func Benchmark_handle(b *testing.B) {
 	var input strings.Builder
-	input.Grow(2_000_000)
+
 	input.WriteString("400\n")
 	for range 400 {
 		input.WriteString("500")
@@ -153,10 +154,7 @@ func Benchmark_handle(b *testing.B) {
 		input.WriteString("\n")
 	}
 
-	w := &strings.Builder{}
-
 	for b.Loop() {
-		handle(strings.NewReader(input.String()), w)
-		w.Reset()
+		handle(strings.NewReader(input.String()), io.Discard)
 	}
 }

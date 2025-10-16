@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"math/rand/v2"
 	"strings"
 	"testing"
@@ -85,10 +86,7 @@ func Benchmark_handle(b *testing.B) {
 		}
 	}
 
-	w := &strings.Builder{}
-
 	for b.Loop() {
-		handle(strings.NewReader(input.String()), w)
-		w.Reset()
+		handle(strings.NewReader(input.String()), io.Discard)
 	}
 }

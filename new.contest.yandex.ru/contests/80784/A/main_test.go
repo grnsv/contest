@@ -1,6 +1,7 @@
 package main
 
 import (
+	"io"
 	"math/rand/v2"
 	"strconv"
 	"strings"
@@ -42,7 +43,7 @@ func Test_handle(t *testing.T) {
 
 func Benchmark_handle(b *testing.B) {
 	var input strings.Builder
-	input.Grow(50000)
+
 	input.WriteString("5000\n")
 	for i := range 2000 {
 		input.WriteString("1 " + strconv.Itoa(i) + " " + strconv.Itoa(rand.IntN(1_000_000)+1) + "\n")
@@ -54,11 +55,7 @@ func Benchmark_handle(b *testing.B) {
 		input.WriteString("3 " + strconv.Itoa(2000-i) + "\n")
 	}
 
-	w := &strings.Builder{}
-
 	for b.Loop() {
-		w.Grow(10000)
-		handle(strings.NewReader(input.String()), w)
-		w.Reset()
+		handle(strings.NewReader(input.String()), io.Discard)
 	}
 }

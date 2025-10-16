@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"math/rand/v2"
 	"strconv"
 	"strings"
@@ -47,7 +48,7 @@ func Test_handle(t *testing.T) {
 
 func Benchmark_handle(b *testing.B) {
 	var input strings.Builder
-	input.Grow(1_700_000)
+
 	input.WriteString("100000\n")
 	for range 100_000 {
 		typ := rand.IntN(2) + 1
@@ -59,11 +60,7 @@ func Benchmark_handle(b *testing.B) {
 		}
 	}
 
-	w := &strings.Builder{}
-
 	for b.Loop() {
-		w.Grow(150_000)
-		handle(strings.NewReader(input.String()), w)
-		w.Reset()
+		handle(strings.NewReader(input.String()), io.Discard)
 	}
 }
